@@ -1,0 +1,67 @@
+<div class="feed-container">
+    <div class="post-form-card">
+      <form [formGroup]="postForm" (ngSubmit)="createPost()">
+        <div class="post-form-header">
+          <img [src]="currentUser?.avatar" alt="User avatar" class="user-avatar">
+          <div class="post-input-container">
+            <textarea
+              formControlName="content"
+              class="post-input"
+              placeholder="What's on your mind?"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        <div class="post-form-footer">
+          <button type="button" class="add-image-button">
+            Add Image
+          </button>
+          <button
+            type="submit"
+            class="post-button"
+            [disabled]="postForm.invalid || isPosting"
+          >
+            {{ isPosting ? 'Posting...' : 'Post' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  
+    <div *ngIf="isLoading" class="loading-container">
+      <p>Loading posts...</p>
+    </div>
+  
+    <div *ngIf="!isLoading && posts.length === 0" class="empty-container">
+      <p>No posts yet. Be the first to post!</p>
+    </div>
+  
+    <div *ngFor="let post of posts" class="post-card">
+      <div class="post-header">
+        <img [src]="post.userAvatar" alt="User avatar" class="post-avatar">
+        <div class="post-user-info">
+          <p class="post-username">{{ post.username }}</p>
+          <p class="post-time">{{ post.createdAt | date:'medium' }}</p>
+        </div>
+      </div>
+      
+      <div class="post-content">
+        <p>{{ post.content }}</p>
+      </div>
+      
+      <img *ngIf="post.image" [src]="post.image" alt="Post image" class="post-image">
+      
+      <div class="post-actions">
+        <button (click)="likePost(post.id)" class="action-button">
+          Like ({{ post.likes }})
+        </button>
+        <button class="action-button">
+          Comment ({{ post.comments }})
+        </button>
+        <button class="action-button">
+          Share
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  
