@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/cloudinary/cloudinary-go"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,11 +15,22 @@ import (
 
 var DB *mongo.Database
 var UserCollection *mongo.Collection
+var PostsCollection *mongo.Collection
+var CLD *cloudinary.Cloudinary
 
 func InitDB() {
+	var err error
+	CLD, err = cloudinary.NewFromParams(
+		os.Getenv("CLOUDINARY_CLOUD_NAME"),
+		os.Getenv("CLOUDINARY_API_KEY"),
+		os.Getenv("CLOUDINARY_API_SECRET"),
+	)
+	if err != nil {
+		log.Fatalf("Failed to initialize Cloudinary: %v", err)
+	}
 	fmt.Println("🔹 Initializing MongoDB connection...")
 	// Load environment variables
-	err := godotenv.Load()
+	err = godotenv.Load()
 	if err != nil {
 		log.Fatal("❌ Error loading .env file")
 	}
@@ -69,6 +81,7 @@ func InitDB() {
 
 	// ✅ Initialize collections
 	UserCollection = DB.Collection("users")
+	PostsCollection = DB.Collection("posts")
 	if UserCollection == nil {
 		log.Fatal("❌ User collection is still nil!")
 	} else {

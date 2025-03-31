@@ -23,6 +23,7 @@ func main() {
 
 	// Now, manually reassign the userCollection
 	database.SetUserCollection()
+	database.SetPostCollection()
 	routes.SetupRoutes()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 

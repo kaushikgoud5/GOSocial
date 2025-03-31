@@ -1,67 +1,91 @@
-<div class="feed-container">
-    <div class="post-form-card">
-      <form [formGroup]="postForm" (ngSubmit)="createPost()">
-        <div class="post-form-header">
-          <img [src]="currentUser?.avatar" alt="User avatar" class="user-avatar">
-          <div class="post-input-container">
-            <textarea
-              formControlName="content"
-              class="post-input"
-              placeholder="What's on your mind?"
-              rows="3"
-            ></textarea>
-          </div>
+<!-- feed.component.html -->
+<div class="max-w-2xl mx-auto px-4 py-6">
+  <div class="post-form-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6">
+    <form [formGroup]="postForm" (ngSubmit)="createPost()" class="w-full">
+      <div class="post-form-header p-4 flex items-start gap-3">
+        <app-avatar></app-avatar>
+        <div class="post-input-container flex-1">
+          <textarea
+            formControlName="content"
+            class="post-input w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+            placeholder="What's on your mind?"
+            rows="3"
+          ></textarea>
         </div>
-        <div class="post-form-footer">
-          <button type="button" class="add-image-button">
+      </div>
+  
+      <div class="post-form-footer p-4 pt-0 border-t border-gray-200 dark:border-gray-700">
+        <!-- Image Preview -->
+        <div *ngIf="imagePreview" class="image-preview relative mb-3 rounded-lg overflow-hidden">
+          <img [src]="imagePreview" alt="Selected Image" class="w-full max-h-[300px] object-contain bg-gray-100 dark:bg-gray-900">
+          <button type="button" class="remove-img-btn absolute top-2 right-2 bg-red-500 text-white rounded-full h-8 w-8 flex items-center justify-center hover:bg-red-600" (click)="clearImage()">✖</button>
+        </div>
+  
+        <div class="flex items-center justify-between">
+          <!-- Hidden File Input with Label -->
+          <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+          <label for="fileInput" class="file-upload-label flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
             Add Image
-          </button>
+          </label>
+  
+          <!-- Post Button -->
           <button
             type="submit"
-            class="post-button"
+            class="post-button px-7 py-2 bg-blue-500 text-white rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             [disabled]="postForm.invalid || isPosting"
           >
             {{ isPosting ? 'Posting...' : 'Post' }}
           </button>
         </div>
-      </form>
-    </div>
-  
-    <div *ngIf="isLoading" class="loading-container">
-      <p>Loading posts...</p>
-    </div>
-  
-    <div *ngIf="!isLoading && posts.length === 0" class="empty-container">
-      <p>No posts yet. Be the first to post!</p>
-    </div>
-  
-    <div *ngFor="let post of posts" class="post-card">
-      <div class="post-header">
-        <img [src]="post.userAvatar" alt="User avatar" class="post-avatar">
-        <div class="post-user-info">
-          <p class="post-username">{{ post.username }}</p>
-          <p class="post-time">{{ post.createdAt | date:'medium' }}</p>
-        </div>
       </div>
-      
-      <div class="post-content">
-        <p>{{ post.content }}</p>
-      </div>
-      
-      <img *ngIf="post.image" [src]="post.image" alt="Post image" class="post-image">
-      
-      <div class="post-actions">
-        <button (click)="likePost(post.id)" class="action-button">
-          Like ({{ post.likes }})
-        </button>
-        <button class="action-button">
-          Comment ({{ post.comments }})
-        </button>
-        <button class="action-button">
-          Share
-        </button>
-      </div>
-    </div>
+    </form>
   </div>
   
+  <div *ngIf="isLoading" class="loading-container py-8 text-center">
+    <p class="text-gray-500 dark:text-gray-400">Loading posts...</p>
+  </div>
   
+  <div *ngIf="!isLoading && posts.length === 0" class="empty-container py-8 text-center border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">
+    <p class="text-gray-500 dark:text-gray-400">No posts yet. Be the first to post!</p>
+  </div>
+  
+  <div *ngFor="let post of posts" class="post-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-4">
+    <div class="post-header p-4 flex items-center gap-3">
+      <app-avatar></app-avatar>
+      <div class="post-user-info">
+        <p class="post-username font-semibold text-gray-900 dark:text-white">{{ post.username }}</p>
+        <p class="post-time text-xs text-gray-500 dark:text-gray-400">{{ post.createdAt | date:'medium' }}</p>
+      </div>
+    </div>
+    
+    <div class="post-content px-4 pb-3">
+      <p class="text-gray-800 dark:text-gray-200">{{ post.caption }}</p>
+    </div>
+    
+    <img *ngIf="post.imageURL" [src]="post.imageURL" alt="Post image" class="post-image w-full object-cover max-h-[500px]">
+    
+    <div class="post-actions p-3 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+      <button (click)="likePost(post.id)" class="action-button flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        <span>{{ post.likes || 0 }}</span>
+      </button>
+      <button class="action-button flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <span>{{ post.comments || 0 }}</span>
+      </button>
+      <button class="action-button flex items-center gap-1 px-3 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+        </svg>
+        <span>Share</span>
+      </button>
+    </div>
+  </div>
+</div>

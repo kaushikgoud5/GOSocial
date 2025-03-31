@@ -10,12 +10,14 @@ var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 type Claims struct {
 	Username string `json:"username"`
+	Id       string `json:"id"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(username string) (string, error) {
+func GenerateToken(username string, id string) (string, error) {
 	claims := &Claims{
 		Username: username,
+		Id:       id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: username,
 		},

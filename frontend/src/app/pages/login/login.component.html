@@ -8,6 +8,7 @@
         <p class="subtitle">Sign in to your account</p>
       </div>
       
+      
       <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="email" class="form-label">Email address</label>
@@ -23,6 +24,20 @@
             <div *ngIf="email?.errors?.['email']">Please enter a valid email</div>
           </div>
         </div>
+        <div class="form-group" *ngIf="!isLoggeed">
+            <label for="username" class="form-label">Username</label>
+            <input
+              id="username"
+              type="text"
+              class="form-input"
+              formControlName="username"
+              placeholder="Enter your username"
+            >
+            <div *ngIf="username?.invalid && (username?.dirty || username?.touched)" class="error-message">
+              <div *ngIf="username?.errors?.['required']">username is required</div>
+              <div *ngIf="username?.errors?.['username']">Please enter a valid username</div>
+            </div>
+          </div>
         
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
@@ -42,10 +57,10 @@
         <button
           type="submit"
           class="submit-button"
-          [disabled]="loginForm.invalid || isLoading"
+          [disabled]="isLoading"
         >
           <span *ngIf="isLoading">Loading...</span>
-          <span *ngIf="!isLoading">Sign in</span>
+          <span *ngIf="!isLoading"> {{ isLoggeed ? "Sign in" : "Sign Up" }}</span>
         </button>
         
         <div *ngIf="errorMessage" class="error-banner">
@@ -54,8 +69,8 @@
         
         <div class="signup-link">
           <p>
-            Don't have an account? 
-            <a href="#" (click)="onClickSignup()">Sign up</a>
+            {{ !isLoggeed ? "Already have an account?" : "Don’t have an account?" }}
+            <a href="#" (click)="SwitchMode()"> {{ !isLoggeed ? "Sign in" : "Create" }} <span>here</span>.</a>
           </p>
         </div>
       </form>

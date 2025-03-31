@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #ffffff;
+    background-color: var(--color-gray-700);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
@@ -22,7 +22,8 @@
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #000000;
+    color: #ffffff;
+    transition: color 0.2s;
   }
   
   .logo-image {
@@ -34,21 +35,23 @@
   .logo-text {
     font-size: 1.25rem;
     font-weight: bold;
+    color: #ffffff;
   }
   
   .navbar-links {
     display: flex;
     align-items: center;
     gap: 1rem;
+    color: #ffffff;
   }
   
   .nav-link {
-    color: #333333;
+    color: #ffffff;
     text-decoration: none;
     transition: color 0.2s;
     
     &:hover {
-      color: #000000;
+      color: gray;
     }
   }
   

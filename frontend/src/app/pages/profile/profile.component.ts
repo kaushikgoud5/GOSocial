@@ -3,11 +3,13 @@ import { CommonModule } from "@angular/common"
 import {  FormBuilder,  FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
 import  { AuthService, User } from "../../services/auth.service"
 import  { PostService, Post } from "../../services/post.service"
+import { ContextService } from "../../services/context.service"
+import { AvatarComponent } from "../../shared/avatar/avatar.component"
 
 @Component({
   selector: "app-profile",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,AvatarComponent],
   templateUrl: "./profile.component.html",
   styleUrls: ["./profile.component.scss"],
 })
@@ -17,14 +19,14 @@ export class ProfileComponent implements OnInit {
   isLoading = true
   isSaving = false
   profileForm: FormGroup
+  path="C:\\Users\\Karthik Goud\\Desktop\\golang\\social-app\\backend\\uploads\\"
 
   constructor(
     private authService: AuthService,
     private postService: PostService,
+    private contextService: ContextService,
     private fb: FormBuilder,
   ) {
-    this.currentUser = this.authService.currentUser
-
     this.profileForm = this.fb.group({
       username: [this.currentUser?.username || "", [Validators.required]],
       bio: ["", [Validators.maxLength(160)]],
@@ -32,21 +34,21 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.contextService.getUser().subscribe(user => {
+      this.currentUser = user
+    })
     this.loadUserPosts()
+
+    console.log(this.userPosts)
   }
 
   loadUserPosts(): void {
     this.isLoading = true
-    this.postService.getPosts().subscribe({
-      next: (posts) => {
-        if (this.currentUser) {
-          this.userPosts = posts.filter((post) => post.userId === this.currentUser?.id)
-        }
-        this.isLoading = false
-      },
-      error: () => {
-        this.isLoading = false
-      },
+    this.postService.getPost(this.currentUser?.id).subscribe(data=>{
+      this.userPosts = data
+      
+      this.isLoading = false    
+      console.log(data)
     })
   }
 

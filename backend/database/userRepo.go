@@ -32,14 +32,18 @@ func HashPassword(password string) (string, error) {
 
 // 🔹 Compare hashed password
 func CheckPasswordHash(password, hash string) bool {
+	if len(hash) < 60 { // Prevent comparing if hash is too short
+		fmt.Println("Invalid hash length:", hash)
+		return false
+	}
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
 // 🔹 Find user by username
-func FindUserByName(username string) (*models.User, error) {
+func FindUserByName(email string) (*models.User, error) {
 	var user models.User
-	err := userCollection.FindOne(context.Background(), bson.M{"username": username}).Decode(&user)
+	err := userCollection.FindOne(context.Background(), bson.M{"email": email}).Decode(&user)
 	return &user, err
 }
 

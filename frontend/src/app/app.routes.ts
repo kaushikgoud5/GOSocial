@@ -5,7 +5,6 @@ export const routes: Routes = [
     {
       path: "",
       loadComponent: () => import("./pages/login/login.component").then((m) => m.LoginComponent),
-      canActivate: [() => !localStorage.getItem("user")],
     },
     {
       path: "feed",
@@ -14,7 +13,6 @@ export const routes: Routes = [
     {
       path: "profile",
       loadComponent: () => import("./pages/profile/profile.component").then((m) => m.ProfileComponent),
-      canActivate: [authGuard],
     },
     {
       path: "**",

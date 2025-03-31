@@ -12,7 +12,7 @@ import { CommonModule } from "@angular/common"
 })
 export class AppComponent {
   isLoggedIn(): boolean {
-    return localStorage.getItem("user") !== null
+    return localStorage.getItem("token") !== null
   }
 }
 

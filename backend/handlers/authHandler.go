@@ -7,8 +7,6 @@ import (
 	"kaushikgoud5/github/social-app/models"
 	"kaushikgoud5/github/social-app/utils"
 	"net/http"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -19,16 +17,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	existingUser, err := database.FindUserByName(user.Username)
+	existingUser, err := database.FindUserByName(user.Email)
 	fmt.Println(existingUser.Password)
-	fmt.Println(user.Password)
-	err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password))
-	if err != nil {
-		fmt.Println("❌ Password mismatch:", err) // Debugging
+	fmt.Println(user)
+	if !database.CheckPasswordHash(user.Password, existingUser.Password) {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
-	token, err := utils.GenerateToken(existingUser.Username)
+	token, err := utils.GenerateToken(existingUser.Username, existingUser.ID.Hex())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
