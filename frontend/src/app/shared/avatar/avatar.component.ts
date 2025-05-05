@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { PostService } from '../../services/post.service';
+// src/app/components/avatar/avatar.component.ts
+import { Component, Input, inject } from '@angular/core';
+import { AvatarService } from '../../services/avatar.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,64 +8,59 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="avatar">
-      <img *ngIf="photoURL; else initialsBlock" [src]="photoURL" alt="User Avatar" />
-      <ng-template #initialsBlock>
-        <div class="avatar-initials">{{ initials }}</div>
-      </ng-template>
-    </div>
+    @if (!imageUrl) {
+      <div class="avatar-initials"
+           [style.width.px]="size"
+           [style.height.px]="size"
+           [style.line-height.px]="size"
+           [style.font-size]="fontSize"
+           [style.background-color]="color"
+           [style.border-radius]="rounded ? '50%' : '0'">
+        {{ initials }}
+      </div>
+    }
+    @if (imageUrl) {
+      <img [src]="imageUrl" 
+           class="avatar-image"
+           [style.width.px]="size"
+           [style.height.px]="size"
+           [style.border-radius]="rounded ? '50%' : '0'"
+           [alt]="name + ' profile picture'">
+    }
   `,
-  styles: [
-    `
-      .avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: black;
-        color: white;
-        font-size: 1.2rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-right: 1rem;
-      }
+  styles: `
+    .avatar-initials {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      user-select: none;
+    }
 
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-      }
-
-      .avatar-initials {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-      }
-    `,
-  ],
+    .avatar-image {
+      object-fit: cover;
+    }
+  `
 })
 export class AvatarComponent {
-  photoURL?: string;
-  displayName: string = '';
+  private avatarService = inject(AvatarService);
 
-  constructor(private userService: PostService) {
-    this.userService.user$.subscribe(user => {
-      this.photoURL = user.photoURL || undefined;
-      this.displayName = user.displayName || 'Kaushik Nakka';
-    });
-  }
+  @Input() name = '';
+  @Input() size = 40;
+  @Input() rounded = true;
+  @Input() imageUrl?: string;
 
   get initials(): string {
-    if (!this.displayName) return '?';
-    const names = this.displayName.split(' ');
-    return names.length > 1
-      ? names[0][0] + names[1][0]
-      : names[0][0]; // First letter of first and last name
+    return this.avatarService.getInitials(this.name);
+  }
+
+  get color(): string {
+    return this.avatarService.getColor(this.name);
+  }
+
+  get fontSize(): string {
+    return this.avatarService.getFontSize(this.size);
   }
 }

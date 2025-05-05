@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"kaushikgoud5/github/social-app/config"
 	"kaushikgoud5/github/social-app/database"
+	"kaushikgoud5/github/social-app/events"
 	"kaushikgoud5/github/social-app/routes"
 	"log"
 	"net/http"
@@ -21,10 +22,16 @@ func main() {
 	config.InitDB()
 	fmt.Println("MongoDB initialized successfully!")
 
-	// Now, manually reassign the userCollection
+	database.SetSocializeRequestCollection()
 	database.SetUserCollection()
 	database.SetPostCollection()
+	database.SetNotificationCollection()
+
+	events.InitProducer(config.Load().KafkaBroker)
+	go events.StartSocializeRequestConsumer(config.Load().KafkaBroker)
+
 	routes.SetupRoutes()
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }

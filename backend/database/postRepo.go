@@ -88,3 +88,23 @@ func UploadImage(file multipart.File, fileHeader *multipart.FileHeader) (string,
 	fmt.Println("Image uploaded successfully:", uploadResult)
 	return uploadResult.SecureURL, nil
 }
+func GetAllUsers() []models.User {
+	cursor, err := userCollection.Find(context.Background(), bson.M{})
+	var users []models.User
+	SetUserCollection()
+	if err != nil {
+		fmt.Println("Error fetching users:", err)
+		return users
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var user models.User
+		if err := cursor.Decode(&user); err != nil {
+			fmt.Println("Error decoding user:", err)
+			continue
+		}
+		users = append(users, user)
+	}
+	return users
+
+}

@@ -89,5 +89,8 @@ export class PostService {
   //     post.likes++
   //   }
   // }
+  sendRequest(data: any): Observable<any> {
+    return this.http.post<any>(`${this.URL}socializeRequest`, data)
+  }
 }
 

@@ -83,8 +83,7 @@
           <div *ngIf="!isLoading && userPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div *ngFor="let post of userPosts" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
               <div class="p-3 flex items-center gap-3 border-b border-gray-200 dark:border-gray-700">
-                <img [src]="currentUser?.avatar || '/placeholder.svg?height=40&width=40'" alt="User avatar" class="h-10 w-10 rounded-full object-cover bg-gray-100 dark:bg-gray-700">
-                <div>
+<app-avatar [name]="post.username"></app-avatar>                <div>
                   <p class="font-semibold text-gray-900 dark:text-white">{{ currentUser?.username }}</p>
                   <p class="text-xs text-gray-500 dark:text-gray-400">{{ post.createdAt | date:'medium' }}</p>
                 </div>

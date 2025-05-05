@@ -3,7 +3,7 @@
   <div class="post-form-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6">
     <form [formGroup]="postForm" (ngSubmit)="createPost()" class="w-full">
       <div class="post-form-header p-4 flex items-start gap-3">
-        <app-avatar></app-avatar>
+        <app-avatar [name]="user.username"></app-avatar>
         <div class="post-input-container flex-1">
           <textarea
             formControlName="content"
@@ -54,7 +54,7 @@
   
   <div *ngFor="let post of posts" class="post-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-4">
     <div class="post-header p-4 flex items-center gap-3">
-      <app-avatar></app-avatar>
+      <app-avatar [name]="post.username"></app-avatar>
       <div class="post-user-info">
         <p class="post-username font-semibold text-gray-900 dark:text-white">{{ post.username }}</p>
         <p class="post-time text-xs text-gray-500 dark:text-gray-400">{{ post.createdAt | date:'medium' }}</p>

@@ -15,6 +15,10 @@ export const routes: Routes = [
       loadComponent: () => import("./pages/profile/profile.component").then((m) => m.ProfileComponent),
     },
     {
+      path: "notifications",
+      loadComponent: () => import("./pages/notification/notification.component").then((m) => m.NotificationComponent),
+    },
+    {
       path: "**",
       redirectTo: "",
     },

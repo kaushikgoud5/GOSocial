@@ -35,11 +35,11 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.contextService.getUser().subscribe(user => {
+      console.log(user)
       this.currentUser = user
     })
     this.loadUserPosts()
 
-    console.log(this.userPosts)
   }
 
   loadUserPosts(): void {

@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common"
 import {  FormBuilder,  FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
 import  { Router } from "@angular/router"
 import  { AuthService } from "../../services/auth.service"
+import { PostService } from "../../services/post.service"
 
 @Component({
   selector: "app-login",
@@ -21,6 +22,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private postSrevice:PostService
   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
@@ -60,6 +62,7 @@ export class LoginComponent {
 
     this.authService.login(email, password).subscribe({
       next: (data) => {
+        this.postSrevice.setUser(data.avatar, data.username)
         localStorage.setItem("token", JSON.stringify(data))
         this.router.navigate(["/feed"])
       },

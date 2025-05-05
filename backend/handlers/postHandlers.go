@@ -74,3 +74,9 @@ func GetPostsByUserID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(posts)
 }
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	users := database.GetAllUsers()
+	fmt.Println(users)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
+}
